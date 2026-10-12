@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Чек-лист UA-2026-10-12-007152-a — ВЕК</title>
+<style>
+:root{--bg:#f7f7f5;--panel:#fff;--fg:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;--ok:#1f7a4d;--warn:#a15c00;--bad:#b42318;--accent:#2b5bd7;--chip:#f0efe9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--fg:#ecebe6;--muted:#a3a29b;--line:#34332f;--ok:#5cc28d;--warn:#e0a345;--bad:#f07167;--accent:#7aa2ff;--chip:#2a2a27}}
+:root[data-theme="dark"]{--bg:#161615;--panel:#1f1f1d;--fg:#ecebe6;--muted:#a3a29b;--line:#34332f;--ok:#5cc28d;--warn:#e0a345;--bad:#f07167;--accent:#7aa2ff;--chip:#2a2a27}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font:400 26px/1.25 Georgia,"Times New Roman",serif;margin:0 0 4px}
+h2{font-size:17px;margin:28px 0 10px}
+.muted{color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px;margin-top:14px}
+.kv .k{font-size:12px;color:var(--muted)}
+.kv .v{font-weight:600}
+.alert{border-left:4px solid var(--bad);background:var(--panel);border-radius:8px;padding:14px 16px;margin-top:16px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.alert b{color:var(--bad)}
+.progress{display:flex;align-items:center;gap:12px;margin-top:16px}
+.bar{flex:1;height:8px;background:var(--chip);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.count{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.tl{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:8px}
+.tl div{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--panel)}
+.tl .d{font-weight:600;font-variant-numeric:tabular-nums}
+.tl .now{border-color:var(--accent)}
+.tl .end{border-color:var(--bad)}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600;background:var(--chip)}
+tr:last-child td{border-bottom:0}
+tr.done td:not(:first-child){color:var(--muted);text-decoration:line-through}
+td.c{width:36px;text-align:center}
+td.dl{white-space:nowrap;font-variant-numeric:tabular-nums}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;background:var(--chip);margin-left:4px;white-space:nowrap}
+.tag.crit{background:var(--bad);color:#fff}
+.risk li{margin-bottom:8px}
+.lvl{font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;margin-right:6px}
+.hi{color:#fff;background:var(--bad)}.md{color:#fff;background:var(--warn)}.lo{background:var(--chip)}
+.tblwrap{overflow-x:auto}
+@media (max-width:640px){.hn{display:none}}
+button.reset{margin-top:10px;background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:4px 10px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Кабель ААШв-10 3х120 — чек-лист учасника</h1>
+  <div class="muted">UA-2026-10-12-007152-a · учасник: ТОВ «Електротехнічна компанія «ВЕЛЕС»» (ВЕК), ЄДРПОУ 43349778</div>
+
+  <div class="card grid">
+    <div class="kv"><div class="k">Замовник</div><div class="v">КП «Славутич-Тепломережі», ЄДРПОУ 41276766</div></div>
+    <div class="kv"><div class="k">Предмет / ДК 021:2015</div><div class="v">Кабель ААШв-10 3х120, 150 м · 31320000-5</div></div>
+    <div class="kv"><div class="k">Очікувана вартість</div><div class="v">300 000,00 грн без ПДВ (≤ 2 000 грн/м)</div></div>
+    <div class="kv"><div class="k">Процедура</div><div class="v">Запит пропозицій постачальників (електронний каталог)</div></div>
+    <div class="kv"><div class="k">Період уточнень</div><div class="v">Не передбачений</div></div>
+    <div class="kv"><div class="k">Кінець подання</div><div class="v" style="color:var(--bad)">15.10.2026, 08:00</div></div>
+    <div class="kv"><div class="k">Поставка</div><div class="v">15 к.д. від договору, але не пізніше 15.12.2026; м. Славутич</div></div>
+    <div class="kv"><div class="k">Оплата</div><div class="v">100% після поставки, 14 р.д., залежить від бюджетного фінансування</div></div>
+    <div class="kv"><div class="k">Контакт замовника</div><div class="v">Тетяна Романіна, slavteploset2@gmail.com, +380447921200</div></div>
+  </div>
+
+  <div class="alert">
+    <b>Блокер:</b> ВЕК не кваліфікована в категорії каталогу «31320000-5 Електророзподільні кабелі» (UA-F-2025-04-17-000001, адміністратор — ДУ «Професійні закупівлі»). У відборі 50 активних постачальників, ВЕК серед них немає. Без кваліфікації майданчик не прийме пропозицію (Порядок № 822).
+    Шанс устигнути реальний: медіанний строк розгляду заявки — близько 1,1 дня, найдовший — 3,6 дня. Але 68 із 118 заявок у цю категорію відхилено (58%), тож заявка має бути без жодної помилки.
+  </div>
+
+  <div class="progress"><div class="bar"><i id="bar"></i></div><div class="count" id="count">0 із 0 готово</div></div>
+
+  <h2>План подачі</h2>
+  <div class="tl">
+    <div class="now"><div class="d">Вт 13.10, до 11:00</div>Витяг МВС + КЕП директора; подати заявку на кваліфікацію</div>
+    <div><div class="d">Вт 13.10, до 12:00</div>Лист замовнику щодо суперечності «монолітна / багатожильна жила»</div>
+    <div><div class="d">Ср 14.10, протягом дня</div>Рішення адміністратора; ціна, наявність, рік виготовлення</div>
+    <div><div class="d">Ср 14.10, до 18:00</div>Подати пропозицію: ціна + відповіді на критерії, підпис КЕП</div>
+    <div class="end"><div class="d">Чт 15.10, 08:00</div>Кінець подання пропозицій</div>
+  </div>
+
+  <h2>A. Кваліфікація до каталогу <span class="tag crit">критично</span></h2>
+  <div class="tblwrap"><table data-group="a"><thead><tr><th></th><th>Що зробити / документ</th><th class="hn">Підстава / як підтвердити</th><th>Дедлайн</th><th>Хто</th></tr></thead><tbody>
+    <tr><td class="c"><input type="checkbox" id="a1"></td><td>КЕП директора ВЕК (не печатка і не особистий ключ представника): у сертифікаті мають бути ПІБ, назва і код ВЕК</td><td class="hn">п. 1 Кваліфікаційних вимог; підписант має бути в ЄДР</td><td class="dl">13.10 09:00</td><td>Директор</td></tr>
+    <tr><td class="c"><input type="checkbox" id="a2"></td><td>Повний витяг про відсутність судимості на директора (PDF + файл підпису, з QR-кодом), виданий не раніше ніж за 30 днів</td><td class="hn">п. 3.1 КВ; vytiah.mvs.gov.ua</td><td class="dl">13.10 10:00</td><td>Директор</td></tr>
+    <tr><td class="c"><input type="checkbox" id="a3"></td><td>Досвід: 1 виконаний договір на кабель (клас ДК 3132) у Prozorro зі «Звітом про виконання». Вказати ідентифікатор закупівлі</td><td class="hn">п. 2, варіант 2.1 — найшвидший</td><td class="dl">13.10 10:00</td><td>Менеджер</td></tr>
+    <tr><td class="c"><input type="checkbox" id="a4"></td><td>Якщо такого договору в Prozorro немає: копія договору з додатками + видаткові накладні + платіжки з відміткою банку (PDF)</td><td class="hn">п. 2, варіант 2.2</td><td class="dl">13.10 10:00</td><td>Бухгалтер</td></tr>
+    <tr><td class="c"><input type="checkbox" id="a5"></td><td>Довіреність — лише якщо заявку підписує не директор</td><td class="hn">абз. 5 п. 1 КВ</td><td class="dl">13.10 10:00</td><td>Директор</td></tr>
+    <tr><td class="c"><input type="checkbox" id="a6"></td><td>Подати заявку в категорію UA-F-2025-04-17-000001 через майданчик, поставити відмітку згоди з умовами оголошення</td><td class="hn">Порядок № 822; файли без паролів, PDF/JPG</td><td class="dl">13.10 11:00</td><td>Менеджер</td></tr>
+    <tr><td class="c"><input type="checkbox" id="a7"></td><td>Відстежувати рішення; якщо адміністратор запитає документи, відповісти того ж дня</td><td class="hn">Кабінет майданчика</td><td class="dl">14.10</td><td>Менеджер</td></tr>
+  </tbody></table></div>
+
+  <h2>B. Пропозиція в запиті (подається в системі)</h2>
+  <div class="tblwrap"><table data-group="b"><thead><tr><th></th><th>Що зробити / документ</th><th class="hn">Підстава / як підтвердити</th><th>Дедлайн</th><th>Хто</th></tr></thead><tbody>
+    <tr><td class="c"><input type="checkbox" id="b1"></td><td>Підтвердити наявність 150 м одним відрізком, рік виготовлення не раніше 2023, барабан № 16, кінці закриті термоусадковими капами</td><td class="hn">Специфікація, Додаток 1 до проєкту договору</td><td class="dl">14.10 12:00</td><td>Постачання</td></tr>
+    <tr><td class="c"><input type="checkbox" id="b2"></td><td>Сертифікат або декларація відповідності та документ про походження (не РФ, РБ, Іран) — щоб передати під час поставки</td><td class="hn">п. 7 Специфікації; критерій щодо санкцій</td><td class="dl">14.10 12:00</td><td>Постачання</td></tr>
+    <tr><td class="c"><input type="checkbox" id="b3"></td><td>Розрахувати ціну без ПДВ з доставкою до Славутича, завантаженням і поверненням тари</td><td class="hn">ПКМУ № 132; п. 3.4 договору</td><td class="dl">14.10 15:00</td><td>Директор</td></tr>
+    <tr><td class="c"><input type="checkbox" id="b4"></td><td>Критерій «Санкції» (3 вимоги) — відповідь «Так»</td><td class="hn">п. 47 Особливостей ПКМУ № 1178</td><td class="dl">14.10 18:00</td><td>Менеджер</td></tr>
+    <tr><td class="c"><input type="checkbox" id="b5"></td><td>Технічні характеристики (11 вимог): ААШв; 10 кВ; 50 Гц; алюміній; багатожильний; сегментна; паперова просочена ізоляція; 3 жили; 120; 30 років; ДСТУ EN 60228 — «Так»</td><td class="hn">Відповіді лише з переліку очікуваних значень</td><td class="dl">14.10 18:00</td><td>Менеджер</td></tr>
+    <tr><td class="c"><input type="checkbox" id="b6"></td><td>Подати пропозицію і підписати КЕП директора</td><td class="hn">Майданчик</td><td class="dl">14.10 18:00</td><td>Директор</td></tr>
+  </tbody></table></div>
+
+  <h2>C. Якщо ВЕК переможе</h2>
+  <div class="tblwrap"><table data-group="c"><thead><tr><th></th><th>Що зробити / документ</th><th class="hn">Підстава / як підтвердити</th><th>Дедлайн</th><th>Хто</th></tr></thead><tbody>
+    <tr><td class="c"><input type="checkbox" id="c1"></td><td>Критерій «Невиконані зобов'язання за раніше укладеним договором» — відповідь «Так» у групі «при відсутності»</td><td class="hn">Відповідає лише переможець</td><td class="dl">Після визначення переможця</td><td>Менеджер</td></tr>
+    <tr><td class="c"><input type="checkbox" id="c2"></td><td>Підписати договір і Специфікацію (Додаток 1) з печаткою — або письмово зазначити, що печатки немає</td><td class="hn">п. 13.4.1 договору</td><td class="dl">За запитом замовника</td><td>Директор</td></tr>
+    <tr><td class="c"><input type="checkbox" id="c3"></td><td>Повідомити про дату поставки за 3 робочі дні: потрібне оформлення проїзду до зони відчуження</td><td class="hn">п. 5.1, 7.5.3 договору</td><td class="dl">≥ 3 р.д. до поставки</td><td>Логістика</td></tr>
+    <tr><td class="c"><input type="checkbox" id="c4"></td><td>Видаткова накладна у 3 примірниках, сертифікат походження, сертифікат або декларація відповідності, податкова накладна</td><td class="hn">п. 7 Специфікації; п. 13.1</td><td class="dl">Разом із товаром</td><td>Бухгалтер</td></tr>
+  </tbody></table></div>
+  <button class="reset" id="reset">Скинути позначки</button>
+
+  <h2>Ризики та підстави для відхилення</h2>
+  <div class="card"><ul class="risk">
+    <li><span class="lvl hi">ВИСОКИЙ</span>Немає кваліфікації в категорії каталогу — без неї подати пропозицію неможливо.</li>
+    <li><span class="lvl hi">ВИСОКИЙ</span>Суперечність у вимогах до жили: критерій вимагає «багатожильний», а Специфікація — «монолітна жила». Відповідати в системі треба очікуваним значенням, а поставити — те, що в договорі. Через це можлива відмова в прийманні (п. 7.2.9–7.2.12). Періоду уточнень немає, тому до подачі пишемо замовнику листом (чернетка додана).</li>
+    <li><span class="lvl md">СЕРЕДНІЙ</span>«Форма жили — сегментна»: для 3х120 зазвичай виготовляють секторні жили, сегментні — для великих перерізів. Відповідь лише «сегментна»; у листі просимо підтвердити, що секторна прийнятна.</li>
+    <li><span class="lvl md">СЕРЕДНІЙ</span>Одностороннє приймання за Інструкціями П-6 і П-7 без виклику постачальника (ВЕК для замовника іногородня) — акт замовника має повну силу (п. 5.6.1–5.6.3).</li>
+    <li><span class="lvl md">СЕРЕДНІЙ</span>Санкції: 20% вартості за якість; 0,1% за кожен день прострочення і ще 10% після 20 днів; 25% за непоставку (п. 8.3). Строк поставки — лише 15 к.д.</li>
+    <li><span class="lvl md">СЕРЕДНІЙ</span>Оплата залежить від бюджету; замовник звільнений від відповідальності, зокрема за ст. 625 ЦКУ (п. 4.2–4.3, 8.7, 9.1). Обсяг можуть зменшити (п. 1.4, 7.2.3).</li>
+    <li><span class="lvl lo">НИЗЬКИЙ</span>У п. 1.2 договору помилка в коді: «31320000-9» замість «31320000-5». Виправити під час підписання.</li>
+    <li><span class="lvl lo">НИЗЬКИЙ</span>Конкуренція: у категорії 49 активних постачальників, серед них ПАТ «Одескабель» та «Каблекс-Україна». Аукціону немає — перемагає найнижча ціна.</li>
+  </ul></div>
+  <p class="muted" style="margin-top:20px">Джерела: картка закупівлі в ЦБД Prozorro, проєкт договору (Додаток 3), Уніфіковані кваліфікаційні вимоги категорії від 05.11.2025. Стан позначок зберігається лише в цьому браузері.</p>
+</div>
+<script>
+(function(){
+  var KEY='ukt-UA-2026-10-12-007152-a-VEK';
+  var st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  var boxes=[].slice.call(document.querySelectorAll('input[type=checkbox]'));
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function render(){
+    var n=0;boxes.forEach(function(b){b.checked=!!st[b.id];b.closest('tr').classList.toggle('done',b.checked);if(b.checked)n++});
+    document.getElementById('count').textContent=n+' із '+boxes.length+' готово';
+    document.getElementById('bar').style.width=(boxes.length?100*n/boxes.length:0)+'%';
+  }
+  boxes.forEach(function(b){b.addEventListener('change',function(){st[b.id]=b.checked;save();render()})});
+  document.getElementById('reset').addEventListener('click',function(){if(confirm('Скинути всі позначки?')){st={};save();render()}});
+  render();
+})();
+</script>
+</body>
+</html>
