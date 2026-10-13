@@ -19,8 +19,9 @@ GROUPS = [
     ('АСБл', re.compile(r'(?<![А-ЯІЇЄҐ])Ц?АСБ(?:2)?Л')),
     ('ААБл', re.compile(r'(?<![А-ЯІЇЄҐ])Ц?ААБ(?:2|Н)?Л')),
     ('ААШв', re.compile(r'(?<![А-ЯІЇЄҐ])Ц?ААШВ')),
+    ('ЦАБл', re.compile(r'(?<![А-ЯІЇЄҐ])ЦАБ(?:2|Н)?Л')),
 ]
-QUERIES = ['АСБл', 'ААБл', 'ААШв', 'АПвЕгаПу', 'АПвЕгП', 'АСБ2л', 'ЦАСБ', 'ААБ2л', 'ЦААШв', 'ЦААБл', 'АСБл-10', 'ААБл-10', 'ААШв-10']
+QUERIES = ['АСБл', 'ААБл', 'ААШв', 'АПвЕгаПу', 'АПвЕгП', 'АСБ2л', 'ЦАСБ', 'ААБ2л', 'ЦААШв', 'ЦААБл', 'АСБл-10', 'ААБл-10', 'ААШв-10', 'ЦАБл', 'ЦАБ2л']
 STATUSES = ['complete', 'active.awarded', 'active.qualification', 'unsuccessful']
 UNIT_M = {'метр': 1, 'м': 1, 'метри': 1, 'погонний метр': 1, 'кілометр': 1000, 'км': 1000}
 
@@ -148,7 +149,10 @@ if __name__ == '__main__':
     ap.add_argument('out')
     ap.add_argument('--since', default='2025-01-01')
     ap.add_argument('--ids', default='')
+    ap.add_argument('--queries', default='', help='comma-separated search texts to use instead of the default list')
     a = ap.parse_args()
+    if a.queries:
+        QUERIES[:] = [q for q in a.queries.split(',') if q]
     ids = [x for x in a.ids.split(',') if x] or search_ids()
     print('tenders to check', len(ids), flush=True)
     rows = []
