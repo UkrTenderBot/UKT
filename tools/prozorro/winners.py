@@ -1,12 +1,20 @@
 """Check tracked Prozorro tenders for awards (winners) and their contact persons.
 
-Usage: python3 -I winners.py UA-...-a [UA-...-a ...] > winners.json
-Output: JSON list, one entry per tender, with status and award details.
+Usage: python3 -I winners.py UA-...-a [UA-...-a ...] [--profile cable|isp] > winners.json
+Output: JSON list, one entry per tender:
+  awards    — переможці та кандидати (active / pending) з контактами;
+  rejected  — відхилені пропозиції (award unsuccessful/cancelled): переможець змінився — новий лід (п. 4);
+  contracts — договори зі статусом, датою підписання і постачальником (п. 2, сигнал «зараз купує»);
+  bidders   — усі учасники (видно після розкриття): own_bids — участь власних компаній (п. 11).
 """
 import json
 import sys
 import time
 import urllib.request
+import os
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from profiles import get_profile  # noqa: E402
 
 STATUS_UA = {
     'active.enquiries': 'Період уточнень',
@@ -48,7 +56,14 @@ def check(tid):
         'customer': t['procuringEntity']['name'],
         'awards': [],
     }
+    out['rejected'] = []
     for a in t.get('awards', []):
+        if a.get('status') in ('unsuccessful', 'cancelled'):
+            for s in a.get('suppliers', []):
+                out['rejected'].append({'award_status': a['status'], 'lotID': a.get('lotID'),
+                                        'name': s.get('name') or s['identifier'].get('legalName'),
+                                        'edrpou': s['identifier'].get('id'), 'date': (a.get('date') or '')[:10]})
+            continue
         if a.get('status') not in ('active', 'pending'):
             continue
         for s in a.get('suppliers', []):
@@ -66,9 +81,29 @@ def check(tid):
                 'address': ', '.join(x for x in [(s.get('address') or {}).get('locality'), (s.get('address') or {}).get('streetAddress')] if x),
             })
     out['contracts'] = [{'status': c.get('status'), 'amount': (c.get('value') or {}).get('amount'),
-                         'dateSigned': (c.get('dateSigned') or '')[:10]} for c in t.get('contracts', [])]
+                         'dateSigned': (c.get('dateSigned') or '')[:10],
+                         'supplier_edrpou': ((c.get('suppliers') or [{}])[0].get('identifier') or {}).get('id'),
+                         'supplier': (c.get('suppliers') or [{}])[0].get('name')} for c in t.get('contracts', [])]
+    out['bidders'] = []
+    for b in t.get('bids', []):
+        for tr in b.get('tenderers', []):
+            out['bidders'].append({'name': tr.get('name'), 'edrpou': (tr.get('identifier') or {}).get('id'),
+                                   'status': b.get('status')})
+    out['own_bids'] = [b for b in out['bidders'] if b['edrpou'] in PROFILE['own']]
+    for a in out['awards']:
+        a['competitor'] = a['edrpou'] in PROFILE.get('competitors', []) or any(
+            w in (a['name'] or '').upper() for w in PROFILE.get('competitor_names', []))
+        a['own'] = a['edrpou'] in PROFILE['own']
     return out
 
 
 if __name__ == '__main__':
-    print(json.dumps([check(t) for t in sys.argv[1:]], ensure_ascii=False, indent=1))
+    args = sys.argv[1:]
+    prof = 'cable'
+    if '--profile' in args:
+        i = args.index('--profile'); prof = args[i + 1]; del args[i:i + 2]
+    PROFILE = get_profile(prof)
+    res = [check(t) for t in args]
+    print(json.dumps(res, ensure_ascii=False, indent=1))
+    if res and all('error' in r for r in res):
+        sys.exit(2)

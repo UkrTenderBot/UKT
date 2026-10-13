@@ -1,17 +1,66 @@
+"""Завантажує документи закупівель і шукає марки/ключові слова профілю.
+
+Usage: python3 -I scan.py CANDS.json RESULTS.jsonl WORKDIR [--profile cable|isp]
+Кожен рядок RESULTS: hits (марка → файл → фрагменти), volumes (марка → метри, п. 1), supply (поставка товару).
+"""
 import json, os, re, sys, time, zipfile, io, subprocess, shutil, urllib.request, urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 
-CANDS, OUT, WORK = sys.argv[1], sys.argv[2], sys.argv[3]
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from profiles import get_profile, LAT  # noqa: E402
+
+_args = sys.argv[1:]
+_profile = 'cable'
+if '--profile' in _args:
+    _i = _args.index('--profile'); _profile = _args[_i + 1]; del _args[_i:_i + 2]
+PROFILE = get_profile(_profile)
+CANDS, OUT, WORK = _args[0], _args[1], _args[2]
 os.makedirs(WORK, exist_ok=True)
 
-LAT = str.maketrans('ABCEHKMOPTXaceopxyiI', 'АВСЕНКМОРТХасеорхуіІ')
-PATTERNS = {
-    'АСБл': re.compile(r'(?<![А-ЯІЇЄҐ])(?:Ц)?АСБ(?:2)?Л'),
-    'ААБл': re.compile(r'(?<![А-ЯІЇЄҐ])(?:Ц)?ААБ(?:2|Н)?Л'),
-    'ААШв': re.compile(r'(?<![А-ЯІЇЄҐ])(?:Ц)?ААШВ'),
-    'АПвЕгаПу': re.compile(r'(?<![А-ЯІЇЄҐ])АПВЕГАП'),
-    'ЦАБл': re.compile(r'(?<![А-ЯІЇЄҐ])ЦАБ(?:2|Н)?Л'),
-}
+PATTERNS = PROFILE['patterns']
+UNIT_M = {'метр': 1, 'м': 1, 'метри': 1, 'метрів': 1, 'погонний метр': 1, 'м.п.': 1, 'мп': 1, 'кілометр': 1000, 'км': 1000}
+_NUM = r'(\d{1,3}(?:[ \u00a0]\d{3})+|\d+)(?:[.,](\d+))?'
+RX_QTY_AFTER = re.compile(_NUM + r'\s*(км|м\.?\s?п\.?|м|метр\w*)(?![а-яіїєґa-z])', re.I)
+RX_QTY_UNIT_FIRST = re.compile(r'(?<![а-яіїєґa-z])(км|м\.?\s?п\.?|м|метр\w*)\s*[|;:\t]?\s*' + _NUM + r'(?!\s*[хx×*])', re.I)
+
+
+def _num(a, b):
+    return float(re.sub(r'[ \u00a0]', '', a) + ('.' + b if b else ''))
+
+
+RX_SECT = re.compile(r'(\d)\s?[хx×*]\s?(\d{2,3})(?:\s?/\s?(\d{1,3}))?')
+
+
+def section_of(text):
+    m = RX_SECT.search(text or '')
+    return f'{m.group(1)}х{m.group(2)}' + (f'/{m.group(3)}' if m.group(3) else '') if m else ''
+
+
+def _mult(unit):
+    u = unit.lower().replace(' ', '')
+    return 1000 if u.startswith('км') or u.startswith('кіломет') else 1
+
+
+def qty_from_snippet(snip, mark_rx):
+    """Метри після згадки марки у фрагменті (перший правдоподібний обсяг), або None."""
+    n = snip.translate(LAT).upper()
+    m = mark_rx.search(re.sub(r'\s+', ' ', n))
+    tail = snip[m.end():] if m else snip
+    tail = re.sub(r'\d\s?[хx×*]\s?\d+(?:[.,]\d+)?(?:\s?/\s?\d+)?\s*(мм|кв\.?\s?мм)?', ' ', tail, flags=re.I)  # перерізи
+    tail = re.sub(r'\d+(?:[.,]\d+)?\s*кв(?![а-яі])', ' ', tail, flags=re.I)  # напруга
+    for rx, order in ((RX_QTY_AFTER, 'nu'), (RX_QTY_UNIT_FIRST, 'un')):
+        mm = rx.search(tail)
+        if mm:
+            if order == 'nu':
+                val, unit = _num(mm.group(1), mm.group(2)), mm.group(3)
+            else:
+                unit, val = mm.group(1), _num(mm.group(2), mm.group(3))
+            meters = val * _mult(unit)
+            if 1 <= meters <= 500000:
+                return meters
+    return None
+
+
 EXT_OK = ('.doc', '.docx', '.pdf', '.xls', '.xlsx', '.rtf', '.odt', '.ods', '.txt', '.zip', '.csv')
 
 
@@ -153,7 +202,42 @@ def scan_tender(tid):
             for k, v in find(tx).items():
                 res['hits'].setdefault(k, {})[name] = v
     shutil.rmtree(tmp, ignore_errors=True)
+    res['volumes'] = volumes_of(t, res['hits'])
+    res['supply'] = any(i['classification']['id'] in PROFILE['supply_cpvs'] for i in t.get('items', [])) \
+        and not any(i['classification']['id'].startswith('45') for i in t.get('items', []))
     return res
+
+
+def volumes_of(t, hits):
+    """Обсяг у метрах за марками: спершу з позицій закупівлі (кількість × одиниця), інакше з фрагментів документів."""
+    vol = {}
+    for it in t.get('items', []):
+        desc = (it.get('description') or '').translate(LAT).upper()
+        desc = re.sub(r'\s+', ' ', desc)
+        mult = UNIT_M.get(((it.get('unit') or {}).get('name') or '').lower().strip())
+        if not mult or not it.get('quantity'):
+            continue
+        for mark, rx in PATTERNS.items():
+            if rx.search(desc):
+                v = vol.setdefault(mark, {'m': 0, 'src': 'позиції закупівлі', 'parts': []})
+                v['m'] += it['quantity'] * mult
+                v['parts'].append({'section': section_of(it.get('description')), 'm': it['quantity'] * mult})
+                break
+    for mark, files in hits.items():
+        if mark in vol:
+            continue
+        best, best_parts = 0, []
+        for fname, snips in files.items():
+            seen, total, parts = set(), 0, []
+            for sn in snips:
+                q = qty_from_snippet(sn, PATTERNS[mark])
+                if q and sn not in seen:
+                    seen.add(sn); total += q; parts.append({'section': section_of(sn), 'm': q})
+            if total > best:
+                best, best_parts = total, parts
+        if best:
+            vol[mark] = {'m': round(best, 1), 'src': 'документи (оцінка)', 'parts': best_parts}
+    return vol
 
 
 cands = json.load(open(CANDS))
