@@ -128,10 +128,14 @@ def load(tid, since):
                     winners.add((a.get('bid_id'), a.get('lotID')))
             elif a.get('status') in ('unsuccessful', 'cancelled'):
                 out['rejected'].append(row)
+    award_sup = {a.get('id'): (a.get('suppliers') or [{}])[0] for a in t.get('awards', [])}
     for c in t.get('contracts', []):
-        sp = (c.get('suppliers') or [{}])[0]
+        # у tender.contracts API 2.5 часто немає suppliers і dateSigned — беремо постачальника з award,
+        # а дату активного договору — з date (момент підписання/активації)
+        sp = (c.get('suppliers') or [None])[0] or award_sup.get(c.get('awardID')) or {}
+        signed = c.get('dateSigned') or (c.get('date') if c.get('status') in ('active', 'terminated') else '')
         out['contracts'].append({'status': c.get('status'), 'amount': (c.get('value') or {}).get('amount'),
-                                 'dateSigned': (c.get('dateSigned') or '')[:10], 'supplier': sp.get('name'),
+                                 'dateSigned': (signed or '')[:10], 'supplier': sp.get('name'),
                                  'supplier_edrpou': (sp.get('identifier') or {}).get('id')})
     win = next((a for a in out['awards'] if a['award_status'] == 'active'), None)
     out['discount'] = round(1 - win['amount'] / out['value'], 4) if (win and win['amount'] and out['value']) else None
