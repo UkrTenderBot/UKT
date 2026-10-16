@@ -47,7 +47,9 @@ def http(url, body=None):
     return None
 
 
-def search(statuses):
+def search(statuses, since=''):
+    """Видача відсортована від нових до старих; гортаємо до --since (ID містить дату UA-РРРР-ММ-ДД),
+    а без --since — до 2000 записів."""
     ids = {}
     for cpv in P['cpvs']:
         page = 1
@@ -55,9 +57,13 @@ def search(statuses):
             d = http('https://prozorro.gov.ua/api/search/tenders', {'cpv': [cpv], 'status': statuses, 'page': page})
             if not d or not d.get('data'):
                 break
+            older = False
             for x in d['data']:
                 ids[x['tenderID']] = 1
-            if page * 20 >= min(d.get('total', 0), 2000):
+                if since and x['tenderID'][3:13] < since:
+                    older = True
+            limit = d.get('total', 0) if since else min(d.get('total', 0), 2000)
+            if older or page * 20 >= limit:
                 break
             page += 1
     return list(ids)
@@ -179,7 +185,7 @@ if __name__ == '__main__':
     ap.add_argument('--since', default='')
     ap.add_argument('--ids', default='')
     a = ap.parse_args()
-    ids = [x for x in a.ids.split(',') if x] or search([s for s in a.statuses.split(',') if s])
+    ids = [x for x in a.ids.split(',') if x] or search([s for s in a.statuses.split(',') if s], a.since)
     print('tenders to check', len(ids), flush=True)
     with ThreadPoolExecutor(8) as ex:
         res = [r for r in ex.map(lambda x: load(x, a.since), ids) if r]

@@ -34,7 +34,7 @@ def http(url, body=None):
     return None
 
 
-def search(P):
+def search(P, since=''):
     found, failed, qs = {}, 0, [{'cpv': [c]} for c in P['plan_cpvs']] + [{'text': t} for t in P['plan_texts']]
     for q in qs:
         page = 1
@@ -43,17 +43,27 @@ def search(P):
             if d is None or 'data' not in d:
                 failed += 1
                 break
+            older = False
             for x in d['data']:
-                pid = x.get('id') or x.get('_id')
+                # пошук повертає planID (UA-P-РРРР-ММ-ДД-...) без внутрішнього id
+                pid = x.get('planID') or x.get('id') or x.get('_id')
                 if pid:
-                    found[pid] = x
-            if not d['data'] or page * 20 >= min(d.get('total', 0), 400):
+                    if x.get('status') in (None, 'scheduled', 'draft'):
+                        found[pid] = x
+                    if since and pid.startswith('UA-P-') and pid[5:15] < since:
+                        older = True
+            if not d['data'] or older or page * 20 >= min(d.get('total', 0), 2000 if since else 400):
                 break
             page += 1
     return found, failed, len(qs)
 
 
 def detail(pid):
+    if pid.startswith('UA-P-'):
+        # planID -> внутрішній id через сайт prozorro.gov.ua
+        pid = (http('https://prozorro.gov.ua/api/plans/' + pid) or {}).get('id')
+        if not pid:
+            return None
     p = (http(API + pid) or {}).get('data')
     if not p:
         return None
@@ -81,7 +91,7 @@ if __name__ == '__main__':
     ap.add_argument('--since', default='')
     a = ap.parse_args()
     P = get_profile(a.profile)
-    found, failed, total = search(P)
+    found, failed, total = search(P, a.since)
     print(f'plans found {len(found)}; failed queries {failed}/{total}', flush=True)
     with ThreadPoolExecutor(8) as ex:
         rows = [r for r in ex.map(detail, list(found)) if r]
